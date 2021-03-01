@@ -3,17 +3,14 @@
 module Main (main) where
 
 import System.IO (Handle, withFile, IOMode (ReadMode))
-import qualified Data.Attoparsec.Text as P
+import qualified Data.Attoparsec.ByteString as P
 import qualified Data.ByteString as B
-import Data.Text.Encoding (decodeUtf8With)
-import Data.Text.Encoding.Error (ignore)
-import qualified Data.Text as T
 import qualified Data.Set as Set
 
 
 data State
     = State
-    { budgetOrgS :: !(Set.Set T.Text)
+    { budgetOrgS :: !(Set.Set B.ByteString)
     , lineNum :: !Int
     , numBad :: !Int
     }
@@ -38,11 +35,11 @@ mainHelp :: State -> Handle -> IO ()
 mainHelp state handle =
     do
     rawRow <- B.hGetLine handle
-    let rowText = decodeUtf8With ignore rawRow
-    case P.parseOnly rowP rowText of
+    case P.parseOnly rowP rawRow of
         Left _ ->
             do
             putStrLn $ show $ lineNum state
+            putStrLn $ show $ budgetOrgS state
             mainHelp
                 (state { numBad = numBad state + 1, lineNum = lineNum state + 1 }) handle
 
@@ -61,7 +58,7 @@ updateState state row =
 
 data Row
     = Row
-    { budgetOrgR :: !T.Text
+    { budgetOrgR :: !B.ByteString
     }
 
 
@@ -257,464 +254,464 @@ rowP =
 barP :: P.Parser ()
 barP =
     do
-    _ <- P.char '|'
+    _ <- P.word8 124 -- '|'
     return ()
 
 
-yearNoP :: P.Parser T.Text
+yearNoP :: P.Parser B.ByteString
 yearNoP =
     stringP
 
 
-yearShortNameP :: P.Parser T.Text
+yearShortNameP :: P.Parser B.ByteString
 yearShortNameP =
     stringP
 
 
-quarterShortNameP :: P.Parser T.Text
+quarterShortNameP :: P.Parser B.ByteString
 quarterShortNameP =
     stringP
 
 
-monthShortNameP :: P.Parser T.Text
+monthShortNameP :: P.Parser B.ByteString
 monthShortNameP =
     stringP
 
 
-budgetOrgP :: P.Parser T.Text
+budgetOrgP :: P.Parser B.ByteString
 budgetOrgP =
     stringP
 
 
-depGroupCodeP :: P.Parser T.Text
+depGroupCodeP :: P.Parser B.ByteString
 depGroupCodeP =
     stringP
 
 
-depGroupLongP :: P.Parser T.Text
+depGroupLongP :: P.Parser B.ByteString
 depGroupLongP =
     stringP
 
 
-orgCodeP :: P.Parser T.Text
+orgCodeP :: P.Parser B.ByteString
 orgCodeP =
     stringP
 
 
-orgLongP :: P.Parser T.Text
+orgLongP :: P.Parser B.ByteString
 orgLongP =
     stringP
 
 
-orgTypeP :: P.Parser T.Text
+orgTypeP :: P.Parser B.ByteString
 orgTypeP =
     stringP
 
 
-orgTypeLongP :: P.Parser T.Text
+orgTypeLongP :: P.Parser B.ByteString
 orgTypeLongP =
     stringP
 
 
-orgTypeCodeP :: P.Parser T.Text
+orgTypeCodeP :: P.Parser B.ByteString
 orgTypeCodeP =
     stringP
 
 
-pesaGroupP :: P.Parser T.Text
+pesaGroupP :: P.Parser B.ByteString
 pesaGroupP =
     stringP
 
 
-pesaGroupLongP :: P.Parser T.Text
+pesaGroupLongP :: P.Parser B.ByteString
 pesaGroupLongP =
     stringP
 
 
-srGroupP :: P.Parser T.Text
+srGroupP :: P.Parser B.ByteString
 srGroupP =
     stringP
 
 
-srGroupLongP :: P.Parser T.Text
+srGroupLongP :: P.Parser B.ByteString
 srGroupLongP =
     stringP
 
 
-bxValidCodeP :: P.Parser T.Text
+bxValidCodeP :: P.Parser B.ByteString
 bxValidCodeP =
     stringP
 
 
-bxValidGroupLongP :: P.Parser T.Text
+bxValidGroupLongP :: P.Parser B.ByteString
 bxValidGroupLongP =
     stringP
 
 
-foValidCodeP :: P.Parser T.Text
+foValidCodeP :: P.Parser B.ByteString
 foValidCodeP =
     stringP
 
 
-foValidLongP :: P.Parser T.Text
+foValidLongP :: P.Parser B.ByteString
 foValidLongP =
     stringP
 
 
-accountArrangeCodeP :: P.Parser T.Text
+accountArrangeCodeP :: P.Parser B.ByteString
 accountArrangeCodeP =
     stringP
 
 
-accountArrangeLongP :: P.Parser T.Text
+accountArrangeLongP :: P.Parser B.ByteString
 accountArrangeLongP =
     stringP
 
 
-counterCodeP :: P.Parser T.Text
+counterCodeP :: P.Parser B.ByteString
 counterCodeP =
     stringP
 
 
-counterLongP :: P.Parser T.Text
+counterLongP :: P.Parser B.ByteString
 counterLongP =
     stringP
 
 
-segCodeP :: P.Parser T.Text
+segCodeP :: P.Parser B.ByteString
 segCodeP =
     stringP
 
 
-segLongP :: P.Parser T.Text
+segLongP :: P.Parser B.ByteString
 segLongP =
     stringP
 
 
-cofog0CodeP :: P.Parser T.Text
+cofog0CodeP :: P.Parser B.ByteString
 cofog0CodeP =
     stringP
 
 
-cofog0LongP :: P.Parser T.Text
+cofog0LongP :: P.Parser B.ByteString
 cofog0LongP =
     stringP
 
 
-cofog1CodeP :: P.Parser T.Text
+cofog1CodeP :: P.Parser B.ByteString
 cofog1CodeP =
     stringP
 
 
-cofog1LongP :: P.Parser T.Text
+cofog1LongP :: P.Parser B.ByteString
 cofog1LongP =
     stringP
 
 
-cofog2CodeP :: P.Parser T.Text
+cofog2CodeP :: P.Parser B.ByteString
 cofog2CodeP =
     stringP
 
 
-cofog2LongP :: P.Parser T.Text
+cofog2LongP :: P.Parser B.ByteString
 cofog2LongP =
     stringP
 
 
-control0LongP :: P.Parser T.Text
+control0LongP :: P.Parser B.ByteString
 control0LongP =
     stringP
 
 
-control1LongP :: P.Parser T.Text
+control1LongP :: P.Parser B.ByteString
 control1LongP =
     stringP
 
 
-coverageLongP :: P.Parser T.Text
+coverageLongP :: P.Parser B.ByteString
 coverageLongP =
     stringP
 
 
-estimatesCodeP :: P.Parser T.Text
+estimatesCodeP :: P.Parser B.ByteString
 estimatesCodeP =
     stringP
 
 
-estimatesLongP :: P.Parser T.Text
+estimatesLongP :: P.Parser B.ByteString
 estimatesLongP =
     stringP
 
 
-netSubheadLongP :: P.Parser T.Text
+netSubheadLongP :: P.Parser B.ByteString
 netSubheadLongP =
     stringP
 
 
-pesa11CodeP :: P.Parser T.Text
+pesa11CodeP :: P.Parser B.ByteString
 pesa11CodeP =
     stringP
 
 
-pesaGrantsCodeP :: P.Parser T.Text
+pesaGrantsCodeP :: P.Parser B.ByteString
 pesaGrantsCodeP =
     stringP
 
 
-pesaLgCodeP :: P.Parser T.Text
+pesaLgCodeP :: P.Parser B.ByteString
 pesaLgCodeP =
     stringP
 
 
-pesaServicesLongP :: P.Parser T.Text
+pesaServicesLongP :: P.Parser B.ByteString
 pesaServicesLongP =
     stringP
 
 
-pesaRegionalCodeP :: P.Parser T.Text
+pesaRegionalCodeP :: P.Parser B.ByteString
 pesaRegionalCodeP =
     stringP
 
 
-policyRingfenceP :: P.Parser T.Text
+policyRingfenceP :: P.Parser B.ByteString
 policyRingfenceP =
     stringP
 
 
-accountAuthL0CodeP :: P.Parser T.Text
+accountAuthL0CodeP :: P.Parser B.ByteString
 accountAuthL0CodeP =
     stringP
 
 
-accountAuthL1LongP :: P.Parser T.Text
+accountAuthL1LongP :: P.Parser B.ByteString
 accountAuthL1LongP =
     stringP
 
 
-subFuncCodeP :: P.Parser T.Text
+subFuncCodeP :: P.Parser B.ByteString
 subFuncCodeP =
     stringP
 
 
-subFuncLongP :: P.Parser T.Text
+subFuncLongP :: P.Parser B.ByteString
 subFuncLongP =
     stringP
 
 
-funcCodeP :: P.Parser T.Text
+funcCodeP :: P.Parser B.ByteString
 funcCodeP =
     stringP
 
 
-funcLongP :: P.Parser T.Text
+funcLongP :: P.Parser B.ByteString
 funcLongP =
     stringP
 
 
-accountsLongP :: P.Parser T.Text
+accountsLongP :: P.Parser B.ByteString
 accountsLongP =
     stringP
 
 
-chartL5CodeP :: P.Parser T.Text
+chartL5CodeP :: P.Parser B.ByteString
 chartL5CodeP =
     stringP
 
 
-chartL5LongP :: P.Parser T.Text
+chartL5LongP :: P.Parser B.ByteString
 chartL5LongP =
     stringP
 
 
-economicBudgetCodeP :: P.Parser T.Text
+economicBudgetCodeP :: P.Parser B.ByteString
 economicBudgetCodeP =
     stringP
 
 
-economicRingfenceCodeP :: P.Parser T.Text
+economicRingfenceCodeP :: P.Parser B.ByteString
 economicRingfenceCodeP =
     stringP
 
 
-economicGroupCodeP :: P.Parser T.Text
+economicGroupCodeP :: P.Parser B.ByteString
 economicGroupCodeP =
     stringP
 
 
-economicGroupLongP :: P.Parser T.Text
+economicGroupLongP :: P.Parser B.ByteString
 economicGroupLongP =
     stringP
 
 
-economicCatCodeP :: P.Parser T.Text
+economicCatCodeP :: P.Parser B.ByteString
 economicCatCodeP =
     stringP
 
 
-economicCatLongP :: P.Parser T.Text
+economicCatLongP :: P.Parser B.ByteString
 economicCatLongP =
     stringP
 
 
-sectorCodeP :: P.Parser T.Text
+sectorCodeP :: P.Parser B.ByteString
 sectorCodeP =
     stringP
 
 
-sectorLongP :: P.Parser T.Text
+sectorLongP :: P.Parser B.ByteString
 sectorLongP =
     stringP
 
 
-tesCodeP :: P.Parser T.Text
+tesCodeP :: P.Parser B.ByteString
 tesCodeP =
     stringP
 
 
-tesLongP :: P.Parser T.Text
+tesLongP :: P.Parser B.ByteString
 tesLongP =
     stringP
 
 
-esaCodeP :: P.Parser T.Text
+esaCodeP :: P.Parser B.ByteString
 esaCodeP =
     stringP
 
 
-esaLongP :: P.Parser T.Text
+esaLongP :: P.Parser B.ByteString
 esaLongP =
     stringP
 
 
-esaGroupCodeP :: P.Parser T.Text
+esaGroupCodeP :: P.Parser B.ByteString
 esaGroupCodeP =
     stringP
 
 
-esaGroupLongP :: P.Parser T.Text
+esaGroupLongP :: P.Parser B.ByteString
 esaGroupLongP =
     stringP
 
 
-psatCodeP :: P.Parser T.Text
+psatCodeP :: P.Parser B.ByteString
 psatCodeP =
     stringP
 
 
-psatLongP :: P.Parser T.Text
+psatLongP :: P.Parser B.ByteString
 psatLongP =
     stringP
 
 
-naAggregateCodeP :: P.Parser T.Text
+naAggregateCodeP :: P.Parser B.ByteString
 naAggregateCodeP =
     stringP
 
 
-naAggregateLongP :: P.Parser T.Text
+naAggregateLongP :: P.Parser B.ByteString
 naAggregateLongP =
     stringP
 
 
-estimatesCatCodeP :: P.Parser T.Text
+estimatesCatCodeP :: P.Parser B.ByteString
 estimatesCatCodeP =
     stringP
 
 
-estimatesSubCatCodeP :: P.Parser T.Text
+estimatesSubCatCodeP :: P.Parser B.ByteString
 estimatesSubCatCodeP =
     stringP
 
 
-estimatesColCodeP :: P.Parser T.Text
+estimatesColCodeP :: P.Parser B.ByteString
 estimatesColCodeP =
     stringP
 
 
-pesaEconomicBudgetCodeP :: P.Parser T.Text
+pesaEconomicBudgetCodeP :: P.Parser B.ByteString
 pesaEconomicBudgetCodeP =
     stringP
 
 
-pesaEconomicGroupCodeP :: P.Parser T.Text
+pesaEconomicGroupCodeP :: P.Parser B.ByteString
 pesaEconomicGroupCodeP =
     stringP
 
 
-incomeCatShortP :: P.Parser T.Text
+incomeCatShortP :: P.Parser B.ByteString
 incomeCatShortP =
     stringP
 
 
-usageCodeP :: P.Parser T.Text
+usageCodeP :: P.Parser B.ByteString
 usageCodeP =
     stringP
 
 
-statusCodeP :: P.Parser T.Text
+statusCodeP :: P.Parser B.ByteString
 statusCodeP =
     stringP
 
 
-typeCodeP :: P.Parser T.Text
+typeCodeP :: P.Parser B.ByteString
 typeCodeP =
     stringP
 
 
-typeLongP :: P.Parser T.Text
+typeLongP :: P.Parser B.ByteString
 typeLongP =
     stringP
 
 
-typeGroupCodeP :: P.Parser T.Text
+typeGroupCodeP :: P.Parser B.ByteString
 typeGroupCodeP =
     stringP
 
 
-typeGroupLongP :: P.Parser T.Text
+typeGroupLongP :: P.Parser B.ByteString
 typeGroupLongP =
     stringP
 
 
-versionCodeP :: P.Parser T.Text
+versionCodeP :: P.Parser B.ByteString
 versionCodeP =
     stringP
 
 
-fctLoadTypeCodeP :: P.Parser T.Text
+fctLoadTypeCodeP :: P.Parser B.ByteString
 fctLoadTypeCodeP =
     stringP
 
 
-fctLoadTypeLongP :: P.Parser T.Text
+fctLoadTypeLongP :: P.Parser B.ByteString
 fctLoadTypeLongP =
     stringP
 
 
-rowDescriptionP :: P.Parser T.Text
+rowDescriptionP :: P.Parser B.ByteString
 rowDescriptionP =
     stringP
 
 
-dataIdP :: P.Parser T.Text
+dataIdP :: P.Parser B.ByteString
 dataIdP =
     stringP
 
 
-amountP :: P.Parser T.Text
+amountP :: P.Parser B.ByteString
 amountP =
     stringP
 
 
-datetimeP :: P.Parser T.Text
+datetimeP :: P.Parser B.ByteString
 datetimeP =
     stringP
 
 
-stringP :: P.Parser T.Text
+stringP :: P.Parser B.ByteString
 stringP =
     do
-    _ <- P.char '"'
-    str <- P.takeWhile (/= '"')
-    _ <- P.char '"'
+    _ <- P.word8 34 -- '"'
+    str <- P.takeWhile (/= 34) -- '"')
+    _ <- P.word8 34 -- '"'
     return str

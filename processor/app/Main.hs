@@ -38,10 +38,12 @@ mainHelp state handle =
     case P.parseOnly rowP rawRow of
         Left _ ->
             do
-            putStrLn $ show $ lineNum state
-            putStrLn $ show $ budgetOrgS state
             mainHelp
-                (state { numBad = numBad state + 1, lineNum = lineNum state + 1 }) handle
+                (state
+                    { numBad = numBad state + 1
+                    , lineNum = lineNum state + 1
+                    })
+                handle
 
         Right row ->
             mainHelp (updateState state row) handle

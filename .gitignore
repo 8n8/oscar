@@ -1,0 +1,11 @@
+data.csv
+firstFewLines/.stack-work
+stack.hp
+stack.ps
+stack.aux
+processor-exe.prof
+*.sw*
+processor.cabal
+firstFewLines.cabal
+.~lock*
+100lines.csv

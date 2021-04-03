@@ -6,6 +6,7 @@ import System.IO (Handle, withFile, IOMode (ReadMode))
 import qualified Data.Attoparsec.ByteString as P
 import qualified Data.ByteString as B
 import qualified Data.Set as Set
+import qualified Control.Exception as E
 
 
 data State
@@ -13,7 +14,9 @@ data State
     { budgetOrgS :: !(Set.Set B.ByteString)
     , lineNum :: !Int
     , numBad :: !Int
+    , badS :: Maybe String
     }
+    deriving Show
 
 
 initState :: State
@@ -33,26 +36,37 @@ main =
 
 mainHelp :: State -> Handle -> IO ()
 mainHelp state handle =
-    do
-    rawRow <- B.hGetLine handle
-    case P.parseOnly rowP rawRow of
-        Left _ ->
-            do
-            mainHelp
-                (state
-                    { numBad = numBad state + 1
-                    , lineNum = lineNum state + 1
-                    })
-                handle
+    case badS state of
+    Just err ->
+        putStrLn err
 
-        Right row ->
-            mainHelp (updateState state row) handle
+    Nothing ->
+        do
+        eitherRawRow <- E.try $ B.hGetLine handle
+        case (eitherRawRow :: Either IOError B.ByteString) of
+            Left err ->
+                print err
+
+            Right rawRow ->
+                mainHelp (parse state rawRow) handle
+
+
+parse :: State -> B.ByteString -> State
+parse state raw =
+    
+
+
+
+takeEnd n xs = B.drop (B.length xs -n) xs
 
 
 updateState :: State -> Row -> State
 updateState state row =
     state
         { budgetOrgS =
+            if lineNum state == 0 then
+            budgetOrgS state
+            else
             Set.insert (budgetOrgR row) (budgetOrgS state)
         , lineNum = lineNum state + 1
         }

@@ -42,6 +42,8 @@ executables:
     - -Wno-implicit-prelude
     - -Wno-missing-safe-haskell-mode
     - -Wno-missing-import-lists
+    - -Wno-missing-deriving-strategies
+    - -Wno-all-missed-specialisations
     - -O2
 
 tests:

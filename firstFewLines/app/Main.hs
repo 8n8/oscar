@@ -6,4 +6,4 @@ main :: IO ()
 main =
     do
     raw <- readFile "../data.csv"
-    writeFile "100lines.csv" $ unlines $ take 1000 $ lines raw
+    writeFile "100lines.csv" $ unlines $ take 10000 $ lines raw

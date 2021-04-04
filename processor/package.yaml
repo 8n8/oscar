@@ -21,9 +21,11 @@ description:         Please see the README on GitHub at <https://github.com/gith
 
 dependencies:
 - base >= 4.7 && < 5
-- attoparsec
 - bytestring
 - containers
+- cassava
+- text
+- deepseq
 
 library:
   source-dirs: src
@@ -44,6 +46,7 @@ executables:
     - -Wno-missing-import-lists
     - -Wno-missing-deriving-strategies
     - -Wno-all-missed-specialisations
+    - -Wno-unsafe
     - -O2
 
 tests:

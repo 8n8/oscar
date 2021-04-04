@@ -9,3 +9,6 @@ processor.cabal
 firstFewLines.cabal
 .~lock*
 100lines.csv
+*.aux
+*.hp
+*.ps

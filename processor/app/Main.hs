@@ -6,6 +6,7 @@ module Main (main) where
 import qualified Data.ByteString.Lazy as Bl
 import qualified Data.Csv.Streaming as Csv
 import qualified Data.Set as Set
+import qualified Data.IntSet as Iset
 import Data.Csv (FromRecord, defaultDecodeOptions, decDelimiter)
 import Data.Text (Text)
 import GHC.Generics (Generic)
@@ -81,7 +82,7 @@ initAccum =
     , function_codeS = Set.empty
     , function_long_nameS = Set.empty
     , accounts_long_nameS = Set.empty
-    , chart_of_accounts_l5_codeS = Set.empty
+    , chart_of_accounts_l5_codeS = Iset.empty
     , chart_of_accounts_l5_long_nameS = Set.empty
     , economic_budget_codeS = Set.empty
     , economic_ringfence_codeS = Set.empty
@@ -117,8 +118,8 @@ initAccum =
     , fct_load_type_codeS = Set.empty
     , fct_load_type_long_nameS = Set.empty
     , row_descriptionS = Set.empty
-    , data_idS = Set.empty
-    , amountS = Set.empty
+    , data_idS = Iset.empty
+    , amountS = Iset.empty
     , data_effective_datetimeS = Set.empty
     }
 
@@ -177,7 +178,7 @@ data Accum
     , function_codeS :: !(Set.Set Text)
     , function_long_nameS :: !(Set.Set Text)
     , accounts_long_nameS :: !(Set.Set Text)
-    , chart_of_accounts_l5_codeS :: !(Set.Set Text)
+    , chart_of_accounts_l5_codeS :: !Iset.IntSet
     , chart_of_accounts_l5_long_nameS :: !(Set.Set Text)
     , economic_budget_codeS :: !(Set.Set Text)
     , economic_ringfence_codeS :: !(Set.Set Text)
@@ -213,8 +214,8 @@ data Accum
     , fct_load_type_codeS :: !(Set.Set Text)
     , fct_load_type_long_nameS :: !(Set.Set Text)
     , row_descriptionS :: !(Set.Set Text)
-    , data_idS :: !(Set.Set Text)
-    , amountS :: !(Set.Set Text)
+    , data_idS :: !Iset.IntSet
+    , amountS :: !Iset.IntSet
     , data_effective_datetimeS :: !(Set.Set Text)
     }
     deriving (Show, Generic)
@@ -451,7 +452,7 @@ update accum row =
             (accounts_long_name row)
             (accounts_long_nameS accum)
     , chart_of_accounts_l5_codeS =
-        Set.insert
+        Iset.insert
             (chart_of_accounts_l5_code row)
             (chart_of_accounts_l5_codeS accum)
     , chart_of_accounts_l5_long_nameS =
@@ -595,12 +596,12 @@ update accum row =
             (row_description row)
             (row_descriptionS accum)
     , data_idS =
-        Set.insert
+        Iset.insert
             (data_id row)
             (data_idS accum)
     , amountS =
-        Set.insert
-            (amount row)
+        Iset.insert
+            (truncate $ amount row)
             (amountS accum)
     , data_effective_datetimeS =
         Set.insert
@@ -668,7 +669,7 @@ data Row
     , function_code :: !Text
     , function_long_name :: !Text
     , accounts_long_name :: !Text
-    , chart_of_accounts_l5_code :: !Text
+    , chart_of_accounts_l5_code :: !Int
     , chart_of_accounts_l5_long_name :: !Text
     , economic_budget_code :: !Text
     , economic_ringfence_code :: !Text
@@ -704,8 +705,8 @@ data Row
     , fct_load_type_code :: !Text
     , fct_load_type_long_name :: !Text
     , row_description :: !Text
-    , data_id :: !Text
-    , amount :: !Text
+    , data_id :: !Int
+    , amount :: !Double
     , data_effective_datetime :: !Text
     }
     deriving (Generic)

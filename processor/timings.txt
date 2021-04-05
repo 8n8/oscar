@@ -1,1 +1,2 @@
 2227.79s user 124.28s system 111% cpu 35:00.32 total
+613.69s user 103.24s system 144% cpu 8:15.62 total

@@ -12,6 +12,8 @@ import Data.Text (Text)
 import GHC.Generics (Generic)
 import Data.Char (ord)
 import Control.DeepSeq (deepseq, NFData)
+import qualified Chronos as C
+import qualified Data.Attoparsec.Text as A
 
 
 instance NFData Accum
@@ -120,7 +122,7 @@ initAccum =
     , row_descriptionS = Set.empty
     , data_idS = Iset.empty
     , amountS = Iset.empty
-    , data_effective_datetimeS = Set.empty
+    , data_effective_datetimeS = Iset.empty
     }
 
 
@@ -216,7 +218,7 @@ data Accum
     , row_descriptionS :: !(Set.Set Text)
     , data_idS :: !Iset.IntSet
     , amountS :: !Iset.IntSet
-    , data_effective_datetimeS :: !(Set.Set Text)
+    , data_effective_datetimeS :: !Iset.IntSet
     }
     deriving (Show, Generic)
 
@@ -604,8 +606,8 @@ update accum row =
             (truncate $ amount row)
             (amountS accum)
     , data_effective_datetimeS =
-        Set.insert
-            (data_effective_datetime row)
+        Iset.insert
+            (parseTime $ data_effective_datetime row)
             (data_effective_datetimeS accum)
     }
 
@@ -613,6 +615,36 @@ update accum row =
 output :: Accum -> IO ()
 output accum =
     print accum
+
+
+parseTime :: Text -> Int
+parseTime raw =
+    case parseTimeHelp raw of
+    Left err ->
+        error err
+
+    Right ok ->
+        toInt ok
+
+
+toInt :: C.Datetime -> Int
+toInt datetime =
+    let
+    time = C.datetimeToTime datetime
+    i64 = C.getTime time
+    integer :: Integer
+    integer = fromIntegral i64
+    seconds = integer `div` (1000000000 :: Integer)
+    in
+    fromIntegral seconds
+
+
+parseTimeHelp :: Text -> Either String C.Datetime
+parseTimeHelp raw =
+    A.parseOnly
+        (C.parser_YmdHMS
+            (C.DatetimeFormat (Just '-') (Just ' ') (Just ':')))
+        raw
 
 
 data Row

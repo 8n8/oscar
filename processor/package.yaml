@@ -26,6 +26,8 @@ dependencies:
 - cassava
 - text
 - deepseq
+- chronos
+- attoparsec
 
 library:
   source-dirs: src
